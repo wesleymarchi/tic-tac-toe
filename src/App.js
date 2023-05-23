@@ -6,6 +6,7 @@
 
 import {useState} from "react";
 
+// Componentes personalizados, props iniciam com onSomething
 function Square({value, onSquareClick}) { // Componentes devem inciar com letras maiúsculas; value é uma propriedade
     return (
         <button className="square" onClick={onSquareClick}>{value}</button>
@@ -17,14 +18,26 @@ function Square({value, onSquareClick}) { // Componentes devem inciar com letras
 // default informa a outros arquivos usando seu código que é a função principal deste arquivo
 // retorn irá retornar um elemento JSX (combinação de JS e HTML)
 export default function Board() { // Componente Pai
+    const [xIsNext, setXIsNext] = useState(true); // Define o x como sendo o primeiro movimento
     const [squares, setSquares] = useState(Array(9).fill(null)); // Cria uma matriz com 9 elementos (null)
 
-    // Atualiza square
+    // Atualiza square; para lidar com eventos, nomes inciam com handleSomething
     function handleClick(i) {
+        // Verifica se já existe um valor no button (X ou O)
+        if (squares[i]) {
+            return;
+        }
+
         const nextSquares = squares.slice(); // Faz uma cópia de squares
 
-        nextSquares[i] = "X";
+        if (xIsNext) {
+            nextSquares[i] = "X";
+        } else {
+            nextSquares[i] = "O";
+        }
+
         setSquares(nextSquares);
+        setXIsNext(!xIsNext);
     }
 
     // className é uma propriedade (props)
