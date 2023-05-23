@@ -6,21 +6,9 @@
 
 import {useState} from "react";
 
-function Square() { // Componentes devem inciar com letras maiúsculas; value é uma propriedade
-    const [value, setValue] = useState(null);
-
-    // Event
-    function handleClick() {
-        setValue('X');
-    }
-
+function Square({value, onSquareClick}) { // Componentes devem inciar com letras maiúsculas; value é uma propriedade
     return (
-        <button
-            className="square"
-            onClick={handleClick}
-        >
-            {value}
-        </button>
+        <button className="square" onClick={onSquareClick}>{value}</button>
     );
 }
 
@@ -29,25 +17,36 @@ function Square() { // Componentes devem inciar com letras maiúsculas; value é
 // default informa a outros arquivos usando seu código que é a função principal deste arquivo
 // retorn irá retornar um elemento JSX (combinação de JS e HTML)
 export default function Board() { // Componente Pai
-  // className é uma propriedade (props)
-  // value é uma props (propriedade)
-  return (
-      <>
-          <div className="board-row">
-              <Square />
-              <Square />
-              <Square />
-          </div>
-          <div className="board-row">
-              <Square />
-              <Square />
-              <Square />
-          </div>
-          <div className="board-row">
-              <Square />
-              <Square />
-              <Square />
-          </div>
-      </>
+    const [squares, setSquares] = useState(Array(9).fill(null)); // Cria uma matriz com 9 elementos (null)
+
+    // Atualiza square
+    function handleClick(i) {
+        const nextSquares = squares.slice(); // Faz uma cópia de squares
+
+        nextSquares[i] = "X";
+        setSquares(nextSquares);
+    }
+
+    // className é uma propriedade (props)
+    // value é uma props (propriedade)
+    // () => arrow function
+    return (
+        <>
+            <div className="board-row">
+                <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
+                <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
+                <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
+            </div>
+            <div className="board-row">
+                <Square value={squares[3]} onSquareClick={() => handleClick(3)} />
+                <Square value={squares[4]} onSquareClick={() => handleClick(4)} />
+                <Square value={squares[5]} onSquareClick={() => handleClick(5)} />
+            </div>
+            <div className="board-row">
+                <Square value={squares[6]} onSquareClick={() => handleClick(6)} />
+                <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
+                <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
+            </div>
+        </>
   );
 }
