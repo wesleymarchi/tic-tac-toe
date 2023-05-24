@@ -17,10 +17,7 @@ function Square({value, onSquareClick}) { // Componentes devem inciar com letras
 // export é uma palavra-chave (reservada) que torna a função acessível fora do arquivo
 // default informa a outros arquivos usando seu código que é a função principal deste arquivo
 // retorn irá retornar um elemento JSX (combinação de JS e HTML)
-export default function Board() { // Componente Pai
-    const [xIsNext, setXIsNext] = useState(true); // Define o x como sendo o primeiro movimento
-    const [squares, setSquares] = useState(Array(9).fill(null)); // Cria uma matriz com 9 elementos (null)
-
+function Board({xIsNext, squares, onPlay}) {
     // Atualiza square; para lidar com eventos, nomes inciam com handleSomething
     function handleClick(i) {
         // Verifica se já existe um valor no button (X ou O)
@@ -36,8 +33,7 @@ export default function Board() { // Componente Pai
             nextSquares[i] = "O";
         }
 
-        setSquares(nextSquares);
-        setXIsNext(!xIsNext);
+        onPlay(nextSquares);
     }
 
     const winner = calculateWinner(squares);
@@ -72,6 +68,51 @@ export default function Board() { // Componente Pai
             </div>
         </>
   );
+}
+
+export default function Game() { // Componenete de nível superior - export default
+    const [history, setHistory] = useState([Array(9).fill(null)]);
+    const [currentMove, setCurrentMove] = useState(0);
+    const xIsNext = currentMove % 2 === 0;
+    const currentSquares = history[currentMove];
+
+    function handlePlay(nextSquares) {
+        const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+        setHistory(nextHistory);
+        setCurrentMove(nextHistory.length - 1);
+    }
+
+    // Exibindo os movimentos anteriores
+    function jumpTo(nextMove) {
+        setCurrentMove(nextMove);
+    }
+
+    const moves = history.map((squares, move) => {
+        let description;
+
+        if (move > 0) {
+            description = 'Go to move #' + move;
+        } else {
+            description = 'Go to game start';
+        }
+
+        return (
+            <li key={move}>
+                <button onClick={() => jumpTo(move)}>{description}</button>
+            </li>
+        );
+    });
+
+    return (
+        <div className="game">
+            <div className="game-board">
+                <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+            </div>
+            <div className="game-info">
+                <ol>{moves}</ol>
+            </div>
+        </div>
+    );
 }
 
 // Função auxiliar para definir o vencedor
